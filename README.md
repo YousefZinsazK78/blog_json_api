@@ -5,6 +5,9 @@ in this blog api backend we want to work with restful api mysql database and usi
 <br />
 and using fiber golang framework and useing middlewares and routers ...
 
+packages : 
+   fiber v2 : github.com/gofiber/fiber/v2
+   
 
 mysql tables:
 1. post table
