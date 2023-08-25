@@ -18,6 +18,11 @@ func NewMysqlConn(username, password, net, addr, dbname string) *MysqlDatabase {
 		Net:    net,
 		Addr:   addr,
 		DBName: dbname,
+		Params: map[string]string{
+			"parseTime": "true",
+			"charset":   "utf8",
+			"loc":       "Asia/Tehran",
+		},
 	}
 	//create database connection
 	db, err := sql.Open("mysql", config.FormatDSN())

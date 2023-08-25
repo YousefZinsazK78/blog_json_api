@@ -5,20 +5,15 @@ import "time"
 //Todo : implement comments section
 
 type Post struct {
-	ID          int    `json:"-"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	Author      Author `json:"author"`
-	Likes       []int  `json:"likes"`
+	ID    int    `json:"id"`
+	Title string `json:"title"`
+	Body  string `json:"body"`
+	// Author      User   `json:"author"`
+	// Likes       []int  `json:"likes"`
 	// Comments    []string  `json:"comments"`
-	CreatedAt time.Time `json:"createdat"`
-	UpdatedAt time.Time `json:"updatedat"`
-}
-
-type Author struct {
-	Fullname string
-	Username string
-	Password string
+	// Category  []string  `json:"category"`
+	CreatedAt time.Time  `json:"createdat"`
+	UpdatedAt *time.Time `json:"updatedat"`
 }
 
 type User struct {

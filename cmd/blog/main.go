@@ -17,16 +17,20 @@ func main() {
 	}
 
 	var (
-		app        = fiber.New()
-		apiHandler = api.New()
-		mysqlConn  = database.NewMysqlConn(os.Getenv("Username"), os.Getenv("Password"), os.Getenv("Net"), os.Getenv("Addr"), os.Getenv("DBName"))
+		app       = fiber.New()
+		mysqlConn = database.NewMysqlConn(os.Getenv("Username"), os.Getenv("Password"), os.Getenv("Net"), os.Getenv("Addr"), os.Getenv("DBName"))
+
+		apiHandler = api.New(*mysqlConn)
+		v1         = app.Group("/api/v1")
 	)
 
 	//close db connection
 	defer mysqlConn.Close()
 
-	//get method all posts
-	app.Get("/", apiHandler.HandleIndex)
+	//v1 : post blog handler
+	v1.Get("/posts", apiHandler.HandleGetPost)
+	v1.Post("/posts", apiHandler.HandleInsertPost)
+	v1.Get("/posts/:id", apiHandler.HandleGetPostById)
 
 	log.Fatal(app.Listen(":5000"))
 }
