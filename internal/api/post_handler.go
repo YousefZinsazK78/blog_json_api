@@ -12,7 +12,10 @@ func (a *Api) HandleGetPost(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON("error to load post list")
 	}
-	return c.Status(fiber.StatusOK).JSON(posts)
+	return c.Status(fiber.StatusOK).JSON(map[string]any{
+		"size":    len(posts),
+		"message": posts,
+	})
 }
 
 func (a *Api) HandleInsertPost(c *fiber.Ctx) error {
