@@ -17,11 +17,15 @@ func main() {
 	}
 
 	var (
-		app       = fiber.New()
 		mysqlConn = database.NewMysqlConn(os.Getenv("Username"), os.Getenv("Password"), os.Getenv("Net"), os.Getenv("Addr"), os.Getenv("DBName"))
 
 		apiHandler = api.New(*mysqlConn)
-		v1         = app.Group("/api/v1")
+		app        = fiber.New(
+			fiber.Config{
+				ErrorHandler: api.ErrorHandler,
+			},
+		)
+		v1 = app.Group("/api/v1")
 	)
 
 	//close db connection

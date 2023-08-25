@@ -21,12 +21,12 @@ func (a *Api) HandleGetPost(c *fiber.Ctx) error {
 func (a *Api) HandleInsertPost(c *fiber.Ctx) error {
 	var post types.Post
 	if err := c.BodyParser(&post); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(err)
+		return ErrPostBadRequest()
 	}
 
 	err := a.mysqlDB.InsertPost(&post)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON("error to load post list")
+		return ErrPostBadRequest()
 	}
 
 	return c.Status(fiber.StatusOK).JSON(map[string]string{
@@ -38,14 +38,12 @@ func (a *Api) HandleGetPostById(c *fiber.Ctx) error {
 	id := c.Params("id")
 	intId, err := strconv.Atoi(id)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(map[string]string{
-			"message": "unable to convert asci to integer",
-		})
+		return ErrPostNotFound()
 	}
 
 	post, err := a.mysqlDB.GetPostById(intId)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON("error to load post ")
+		return ErrPostBadRequest()
 	}
 
 	return c.Status(fiber.StatusOK).JSON(map[string]any{
