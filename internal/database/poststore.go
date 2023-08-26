@@ -16,6 +16,7 @@ type PostStorer interface {
 	GetPostsById(int) (*types.Post, error)
 	GetPostByTitle(string) ([]*types.Post, error)
 	DeletePost(int) error
+	UpdatePost(int, types.UpdateParams) error
 }
 
 func (m *MysqlDatabase) InsertPost(postModel *types.Post) error {
@@ -98,7 +99,22 @@ func (m *MysqlDatabase) DeletePost(id int) error {
 	if err != nil {
 		return err
 	}
+	defer stmt.Close()
 	_, err = stmt.Exec(id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MysqlDatabase) UpdatePost(id int, postParam *types.UpdateParams) error {
+	query := `UPDATE POST_TBL SET title=?, updatedat=? WHERE ID = ?;`
+	stmt, err := m.DB.Prepare(query)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+	_, err = stmt.Exec(postParam.Title, time.Now().UTC(), id)
 	if err != nil {
 		return err
 	}

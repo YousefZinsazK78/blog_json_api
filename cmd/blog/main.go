@@ -37,7 +37,7 @@ func main() {
 	v1.Get("/posts/:id", apiHandler.HandleGetPostById)
 	v1.Get("/posts/title/:title", apiHandler.HandleGetPostByTitle)
 	v1.Delete("/posts/:id", apiHandler.HandleDeletePost)
-	// v1.Put("/posts/:id", apiHandler.HandleUpdatePost)
+	v1.Put("/posts/:id", apiHandler.HandleUpdatePost)
 
 	log.Fatal(app.Listen(":5000"))
 }

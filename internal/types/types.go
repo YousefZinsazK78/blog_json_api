@@ -4,6 +4,10 @@ import "time"
 
 //Todo : implement comments section
 
+type UpdateParams struct {
+	Title string `json:"title"`
+}
+
 type Post struct {
 	ID    int    `json:"id"`
 	Title string `json:"title"`
