@@ -4,6 +4,11 @@ import "time"
 
 //Todo : implement comments section
 
+type QueryParams struct {
+	Pages  int `json:"pages"`
+	Limits int `json:"limits"`
+}
+
 type UpdateParams struct {
 	Title string `json:"title"`
 }

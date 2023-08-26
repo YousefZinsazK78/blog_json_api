@@ -12,7 +12,7 @@ import (
 
 type PostStorer interface {
 	InsertPost(*types.Post) error
-	GetPosts() ([]*types.Post, error)
+	GetPosts(int, int) ([]*types.Post, error)
 	GetPostsById(int) (*types.Post, error)
 	GetPostByTitle(string) ([]*types.Post, error)
 	DeletePost(int) error
@@ -33,9 +33,9 @@ func (m *MysqlDatabase) InsertPost(postModel *types.Post) error {
 	return nil
 }
 
-func (m *MysqlDatabase) GetPosts() ([]*types.Post, error) {
-	query := `SELECT * FROM POST_TBL;`
-	rows, err := m.DB.Query(query)
+func (m *MysqlDatabase) GetPosts(page, limit int) ([]*types.Post, error) {
+	query := `SELECT * FROM POST_TBL LIMIT ?,?;`
+	rows, err := m.DB.Query(query, (page-1)*limit, limit)
 	if err != nil {
 		return nil, err
 	}

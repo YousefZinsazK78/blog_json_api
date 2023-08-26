@@ -1,6 +1,7 @@
 package api
 
 import (
+	"log"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
@@ -8,12 +9,22 @@ import (
 )
 
 func (a *Api) HandleGetPost(c *fiber.Ctx) error {
-	posts, err := a.mysqlDB.GetPosts()
+	var queryParams types.QueryParams
+	if err := c.QueryParser(&queryParams); err != nil {
+		log.Println(err)
+		return ErrPostBadRequest()
+	}
+
+	if queryParams.Pages == 0 {
+		queryParams.Pages = 1
+	}
+
+	posts, err := a.mysqlDB.GetPosts(queryParams.Pages, queryParams.Limits)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON("error to load post list")
+		return ErrPostBadRequest()
 	}
 	return c.Status(fiber.StatusOK).JSON(map[string]any{
-		"size":    len(posts),
+		"length":  len(posts),
 		"message": posts,
 	})
 }
@@ -88,18 +99,18 @@ func (a *Api) HandleUpdatePost(c *fiber.Ctx) error {
 		return ErrPostBadRequest()
 	}
 
-	var post *types.UpdateParams
-	if err := c.BodyParser(post); err != nil {
-		return ErrPostBadRequest()
+	var post types.UpdateParams
+	if err := c.BodyParser(&post); err != nil {
+		return NewBlogError(fiber.StatusBadRequest, err.Error())
 	}
 
-	err = a.mysqlDB.UpdatePost(intId, post)
+	err = a.mysqlDB.UpdatePost(intId, &post)
 	if err != nil {
 		return ErrPostNotFound()
 	}
 
 	return c.Status(fiber.StatusOK).JSON(map[string]any{
 		"status": fiber.StatusOK,
-		"result": "post deleted successfully ✅",
+		"result": "post updated successfully ✅",
 	})
 }
