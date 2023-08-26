@@ -62,3 +62,21 @@ func (a *Api) HandleGetPostByTitle(c *fiber.Ctx) error {
 		"result": posts,
 	})
 }
+
+func (a *Api) HandleDeletePost(c *fiber.Ctx) error {
+	id := c.Params("id")
+	intId, err := strconv.Atoi(id)
+	if err != nil {
+		return ErrPostBadRequest()
+	}
+
+	err = a.mysqlDB.DeletePost(intId)
+	if err != nil {
+		return ErrPostNotFound()
+	}
+
+	return c.Status(fiber.StatusOK).JSON(map[string]any{
+		"status": fiber.StatusOK,
+		"result": "post deleted successfully ✅",
+	})
+}
