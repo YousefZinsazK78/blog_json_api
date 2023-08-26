@@ -38,15 +38,27 @@ func (a *Api) HandleGetPostById(c *fiber.Ctx) error {
 	id := c.Params("id")
 	intId, err := strconv.Atoi(id)
 	if err != nil {
-		return ErrPostNotFound()
+		return ErrPostBadRequest()
 	}
 
 	post, err := a.mysqlDB.GetPostById(intId)
 	if err != nil {
-		return ErrPostBadRequest()
+		return ErrPostNotFound()
 	}
 
 	return c.Status(fiber.StatusOK).JSON(map[string]any{
 		"result": post,
+	})
+}
+
+func (a *Api) HandleGetPostByTitle(c *fiber.Ctx) error {
+	title := c.Params("title")
+	posts, err := a.mysqlDB.GetPostByTitle(title)
+	if err != nil {
+		return ErrPostNotFound()
+	}
+
+	return c.Status(fiber.StatusOK).JSON(map[string]any{
+		"result": posts,
 	})
 }

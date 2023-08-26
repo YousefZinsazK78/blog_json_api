@@ -35,6 +35,7 @@ func main() {
 	v1.Get("/posts", apiHandler.HandleGetPost)
 	v1.Post("/posts", apiHandler.HandleInsertPost)
 	v1.Get("/posts/:id", apiHandler.HandleGetPostById)
+	v1.Get("/posts/title/:title", apiHandler.HandleGetPostByTitle)
 
 	log.Fatal(app.Listen(":5000"))
 }
