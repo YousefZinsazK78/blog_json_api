@@ -1,8 +1,11 @@
 package types
 
-import "time"
+import (
+	"log"
+	"time"
 
-//Todo : implement comments section
+	"golang.org/x/crypto/bcrypt"
+)
 
 type QueryParams struct {
 	Pages  int `json:"pages"`
@@ -14,10 +17,10 @@ type UpdateParams struct {
 }
 
 type Post struct {
-	ID    int    `json:"id"`
-	Title string `json:"title"`
-	Body  string `json:"body"`
-	// Author      User   `json:"author"`
+	ID     int    `json:"id"`
+	Title  string `json:"title"`
+	Body   string `json:"body"`
+	Author User   `json:"author"`
 	// Likes       []int  `json:"likes"`
 	// Comments    []string  `json:"comments"`
 	// Category  []string  `json:"category"`
@@ -26,17 +29,23 @@ type Post struct {
 }
 
 type User struct {
-	Fullname string
-	Username string
-	Password string
-	email    string
-	role     Roles
+	ID       int    `json:"id"`
+	Fullname string `json:"fullname"`
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Email    string `json:"email"`
+	IsAdmin  bool   `json:"-"`
 }
 
-type Roles int
+func (u User) HashUserPassword() string {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(u.Password), 14)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return string(bytes)
+}
 
-const (
-	Admin  Roles = 1
-	Writer Roles = 2
-	Guest  Roles = 3
-)
+func (u User) CheckHashPassword(Passwd string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(Passwd))
+	return err == nil
+}

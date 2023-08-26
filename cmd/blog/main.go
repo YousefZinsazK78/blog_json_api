@@ -39,5 +39,8 @@ func main() {
 	v1.Delete("/posts/:id", apiHandler.HandleDeletePost)
 	v1.Put("/posts/:id", apiHandler.HandleUpdatePost)
 
+	//user router : user blog handler
+	app.Post("/users", apiHandler.HandleInsertUser)
+
 	log.Fatal(app.Listen(":5000"))
 }
