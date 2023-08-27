@@ -76,6 +76,7 @@ func (a *Api) HandleGetUsers(c *fiber.Ctx) error {
 	if err := c.QueryParser(&queryParams); err != nil {
 		return ErrPostBadRequest()
 	}
+
 	users, err := a.mysqlDB.GetUsers(queryParams.Pages, queryParams.Limits)
 	if err != nil {
 		return ErrPostBadRequest()
