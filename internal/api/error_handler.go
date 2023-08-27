@@ -45,3 +45,17 @@ func ErrNotFound() BlogError {
 		Message: "Not Found! 🔎",
 	}
 }
+
+func ErrTokenExpired() BlogError {
+	return BlogError{
+		Code:    fiber.StatusBadRequest,
+		Message: "Token Expired! 😢",
+	}
+}
+
+func ErrUnAuthorized() BlogError {
+	return BlogError{
+		Code:    fiber.StatusUnauthorized,
+		Message: "unauthorized!",
+	}
+}

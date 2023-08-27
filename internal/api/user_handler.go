@@ -3,6 +3,7 @@ package api
 import (
 	"log"
 	"strconv"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/yousefzinsazk78/blog_json_api/internal/types"
@@ -104,6 +105,20 @@ func (a *Api) HandleSignInUser(c *fiber.Ctx) error {
 	var resp types.Response
 
 	if user.CheckHashPassword(SignUserParams.Password) {
+		jwtToken, err := GenerateJWT(user.ID, *user.IsAdmin, time.Duration(3*time.Minute))
+		if err != nil {
+			return NewBlogError(fiber.StatusBadRequest, err.Error())
+		}
+		log.Println(jwtToken)
+
+		res, err := ParseJWT(jwtToken)
+		if err != nil {
+			return NewBlogError(fiber.StatusBadRequest, err.Error())
+		}
+		log.Println(res["userid"])
+		log.Println(res["isAdmin"])
+		log.Println(res["ExpiredAt"])
+
 		resp = types.Response{
 			Status:  fiber.StatusAccepted,
 			Message: "signIn successfully 🤘✅",
