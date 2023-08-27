@@ -9,14 +9,14 @@ import (
 	"github.com/yousefzinsazk78/blog_json_api/internal/types"
 )
 
-func seedPostTable(db *sql.DB, title, body string) {
-	query := `INSERT INTO post_tbl(Title,Body, CreatedAt) VALUES (? ,? ,?)`
+func seedPostTable(db *sql.DB, title, body string, userid int) {
+	query := `INSERT INTO post_tbl(Title,Body, CreatedAt,user_id) VALUES (? ,? ,?, ?)`
 	stmt, err := db.Prepare(query)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	_, err = stmt.Exec(title, body, time.Now().UTC())
+	_, err = stmt.Exec(title, body, time.Now().UTC(), userid)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -50,20 +50,20 @@ func main() {
 	// wg.Add(3)
 	// go func() {
 	// 	for i := 0; i < 250; i++ {
-	// 		seedPostTable(mysqlConn.DB, "title test blog post", "body test blog post")
+	// 		seedPostTable(mysqlConn.DB, "title test blog post", "body test blog post", 4)
 	// 	}
 	// 	wg.Done()
 	// }()
 
 	// go func() {
 	// 	for i := 0; i < 250; i++ {
-	// 		seedPostTable(mysqlConn.DB, "blog post title", "blog post body")
+	// 		seedPostTable(mysqlConn.DB, "blog post title", "blog post body", 5)
 	// 	}
 	// 	wg.Done()
 	// }()
 	// go func() {
 	// 	for i := 0; i < 250; i++ {
-	// 		seedPostTable(mysqlConn.DB, "test test title test test", "test body test")
+	// 		seedPostTable(mysqlConn.DB, "test test title test test", "test body test", 6)
 	// 	}
 	// 	wg.Done()
 	// }()
