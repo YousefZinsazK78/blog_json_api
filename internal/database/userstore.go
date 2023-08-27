@@ -65,7 +65,7 @@ func (m *MysqlDatabase) GetUsers(page, limit int) ([]*types.User, error) {
 	var users []*types.User
 	for rows.Next() {
 		var user types.User
-		if err := rows.Scan(&user.ID, &user.Fullname, &user.Email, &user.Username, &user.Password); err != nil {
+		if err := rows.Scan(&user.ID, &user.Fullname, &user.Email, &user.Username, &user.IsAdmin, &user.Password); err != nil {
 			return nil, err
 		}
 		users = append(users, &user)
