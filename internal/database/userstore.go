@@ -5,7 +5,10 @@ import (
 )
 
 type UserStorer interface {
+	GetUsers(int, int) ([]*types.User, error)
 	InsertUser(*types.User) error
+	DeleteUser(int) error
+	UpdateUser(int, *types.UserUpdateParams) error
 }
 
 func (m *MysqlDatabase) InsertUser(user *types.User) error {
@@ -15,10 +18,57 @@ func (m *MysqlDatabase) InsertUser(user *types.User) error {
 		return err
 	}
 	defer stmt.Close()
-
 	_, err = stmt.Exec(user.Fullname, user.Email, user.Username, user.Password)
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+func (m *MysqlDatabase) DeleteUser(id int) error {
+	query := `DELETE FROM USER_TBL WHERE ID = ?;`
+	stmt, err := m.DB.Prepare(query)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MysqlDatabase) UpdateUser(id int, user *types.UserUpdateParams) error {
+	query := `UPDATE USER_TBL SET username=?, email=? WHERE ID=?;`
+	stmt, err := m.DB.Prepare(query)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+	_, err = stmt.Exec(user.Username, user.Email, id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MysqlDatabase) GetUsers(page, limit int) ([]*types.User, error) {
+	query := `SELECT * FROM USER_TBL LIMIT ?,?;`
+	rows, err := m.DB.Query(query, (page-1)*limit, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users []*types.User
+	for rows.Next() {
+		var user types.User
+		if err := rows.Scan(&user.ID, &user.Fullname, &user.Email, &user.Username, &user.Password); err != nil {
+			return nil, err
+		}
+		users = append(users, &user)
+	}
+	return users, nil
 }

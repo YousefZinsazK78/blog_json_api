@@ -40,7 +40,10 @@ func main() {
 	v1.Put("/posts/:id", apiHandler.HandleUpdatePost)
 
 	//user router : user blog handler
+	app.Get("/users", apiHandler.HandleGetUsers)
 	app.Post("/users", apiHandler.HandleInsertUser)
+	app.Delete("/users/:id", apiHandler.HandleDeleteUser)
+	app.Put("/users/:id", apiHandler.HandleUpdateUser)
 
 	log.Fatal(app.Listen(":5000"))
 }

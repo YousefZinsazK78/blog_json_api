@@ -7,6 +7,16 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+type Response struct {
+	Status  int `json:"status"`
+	Message any `json:"message"`
+}
+
+type UserUpdateParams struct {
+	Email    string `json:"email"`
+	Username string `json:"username"`
+}
+
 type QueryParams struct {
 	Pages  int `json:"pages"`
 	Limits int `json:"limits"`
