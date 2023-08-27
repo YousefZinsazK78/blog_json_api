@@ -6,6 +6,7 @@ import (
 
 type UserStorer interface {
 	GetUsers(int, int) ([]*types.User, error)
+	GetUserByEmail(string) (*types.User, error)
 	InsertUser(*types.User) error
 	DeleteUser(int) error
 	UpdateUser(int, *types.UserUpdateParams) error
@@ -71,4 +72,13 @@ func (m *MysqlDatabase) GetUsers(page, limit int) ([]*types.User, error) {
 		users = append(users, &user)
 	}
 	return users, nil
+}
+
+func (m *MysqlDatabase) GetUserByEmail(email string) (*types.User, error) {
+	query := `SELECT * FROM USER_TBL WHERE EMAIL=?;`
+	var user types.User
+	if err := m.DB.QueryRow(query, email).Scan(&user.ID, &user.Fullname, &user.Email, &user.Username, &user.IsAdmin, &user.Password); err != nil {
+		return nil, err
+	}
+	return &user, nil
 }

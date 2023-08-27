@@ -44,6 +44,8 @@ func main() {
 	app.Post("/users", apiHandler.HandleInsertUser)
 	app.Delete("/users/:id", apiHandler.HandleDeleteUser)
 	app.Put("/users/:id", apiHandler.HandleUpdateUser)
+	app.Post("/users/signin", apiHandler.HandleSignInUser)
+	// app.Post("/users/signup", apiHandler.HandleSignUpUser)
 
 	log.Fatal(app.Listen(":5000"))
 }

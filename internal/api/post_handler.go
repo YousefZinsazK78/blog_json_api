@@ -54,7 +54,7 @@ func (a *Api) HandleGetPostById(c *fiber.Ctx) error {
 
 	post, err := a.mysqlDB.GetPostById(intId)
 	if err != nil {
-		return ErrPostNotFound()
+		return ErrNotFound()
 	}
 
 	return c.Status(fiber.StatusOK).JSON(map[string]any{
@@ -66,7 +66,7 @@ func (a *Api) HandleGetPostByTitle(c *fiber.Ctx) error {
 	title := c.Params("title")
 	posts, err := a.mysqlDB.GetPostByTitle(title)
 	if err != nil {
-		return ErrPostNotFound()
+		return ErrNotFound()
 	}
 
 	return c.Status(fiber.StatusOK).JSON(map[string]any{
@@ -83,7 +83,7 @@ func (a *Api) HandleDeletePost(c *fiber.Ctx) error {
 
 	err = a.mysqlDB.DeletePost(intId)
 	if err != nil {
-		return ErrPostNotFound()
+		return ErrNotFound()
 	}
 
 	return c.Status(fiber.StatusOK).JSON(map[string]any{
@@ -106,7 +106,7 @@ func (a *Api) HandleUpdatePost(c *fiber.Ctx) error {
 
 	err = a.mysqlDB.UpdatePost(intId, &post)
 	if err != nil {
-		return ErrPostNotFound()
+		return ErrNotFound()
 	}
 
 	return c.Status(fiber.StatusOK).JSON(map[string]any{

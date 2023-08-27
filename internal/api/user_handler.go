@@ -89,3 +89,33 @@ func (a *Api) HandleGetUsers(c *fiber.Ctx) error {
 		},
 	)
 }
+
+func (a *Api) HandleSignInUser(c *fiber.Ctx) error {
+	var SignUserParams types.UserSignInParams
+	if err := c.BodyParser(&SignUserParams); err != nil {
+		return ErrPostBadRequest()
+	}
+
+	user, err := a.mysqlDB.GetUserByEmail(SignUserParams.Email)
+	if err != nil {
+		return ErrNotFound()
+	}
+
+	var resp types.Response
+
+	if user.CheckHashPassword(SignUserParams.Password) {
+		resp = types.Response{
+			Status:  fiber.StatusAccepted,
+			Message: "signIn successfully 🤘✅",
+		}
+	} else {
+		resp = types.Response{
+			Status:  fiber.StatusBadRequest,
+			Message: "signIn problem ⚠",
+		}
+	}
+
+	return c.Status(resp.Status).JSON(
+		resp,
+	)
+}

@@ -39,9 +39,9 @@ func ErrPostBadRequest() BlogError {
 	}
 }
 
-func ErrPostNotFound() BlogError {
+func ErrNotFound() BlogError {
 	return BlogError{
 		Code:    fiber.StatusNotFound,
-		Message: "Post Not Found! 🔎",
+		Message: "Not Found! 🔎",
 	}
 }
