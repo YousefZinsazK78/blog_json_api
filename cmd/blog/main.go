@@ -25,7 +25,7 @@ func main() {
 				ErrorHandler: api.ErrorHandler,
 			},
 		)
-		v1 = app.Group("/api/v1")
+		v1 = app.Group("/api/v1", api.JWTAuthmiddleware(mysqlConn))
 	)
 
 	//close db connection

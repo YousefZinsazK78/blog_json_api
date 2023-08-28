@@ -7,6 +7,7 @@ import (
 type UserStorer interface {
 	GetUsers(int, int) ([]*types.User, error)
 	GetUserByEmail(string) (*types.User, error)
+	GetUserByID(int) (*types.User, error)
 	InsertUser(*types.User) error
 	DeleteUser(int) error
 	UpdateUser(int, *types.UserUpdateParams) error
@@ -78,6 +79,15 @@ func (m *MysqlDatabase) GetUserByEmail(email string) (*types.User, error) {
 	query := `SELECT * FROM USER_TBL WHERE EMAIL=?;`
 	var user types.User
 	if err := m.DB.QueryRow(query, email).Scan(&user.ID, &user.Fullname, &user.Email, &user.Username, &user.IsAdmin, &user.Password); err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
+func (m *MysqlDatabase) GetUserByID(id int) (*types.User, error) {
+	query := `SELECT * FROM USER_TBL WHERE ID=?;`
+	var user types.User
+	if err := m.DB.QueryRow(query, id).Scan(&user.ID, &user.Fullname, &user.Email, &user.Username, &user.IsAdmin, &user.Password); err != nil {
 		return nil, err
 	}
 	return &user, nil
