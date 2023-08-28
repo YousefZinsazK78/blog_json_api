@@ -60,7 +60,7 @@ func (u User) HashUserPassword() string {
 	return string(bytes)
 }
 
-func (u User) CheckHashPassword(Passwd string) bool {
+func (u *User) CheckHashPassword(Passwd string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(Passwd))
 	return err == nil
 }

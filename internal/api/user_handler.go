@@ -102,35 +102,63 @@ func (a *Api) HandleSignInUser(c *fiber.Ctx) error {
 		return ErrNotFound()
 	}
 
-	var resp types.Response
-
-	if user.CheckHashPassword(SignUserParams.Password) {
-		jwtToken, err := GenerateJWT(user.ID, *user.IsAdmin, time.Duration(3*time.Minute))
-		if err != nil {
-			return NewBlogError(fiber.StatusBadRequest, err.Error())
-		}
-		log.Println(jwtToken)
-
-		res, err := ParseJWT(jwtToken)
-		if err != nil {
-			return NewBlogError(fiber.StatusBadRequest, err.Error())
-		}
-		log.Println(res["userid"])
-		log.Println(res["isAdmin"])
-		log.Println(res["ExpiredAt"])
-
-		resp = types.Response{
-			Status:  fiber.StatusAccepted,
-			Message: "signIn successfully 🤘✅",
-		}
-	} else {
-		resp = types.Response{
-			Status:  fiber.StatusBadRequest,
-			Message: "signIn problem ⚠",
-		}
+	var checkPassword = user.CheckHashPassword(SignUserParams.Password)
+	if !checkPassword {
+		return NewBlogError(fiber.StatusBadRequest, "password not equal !")
 	}
 
-	return c.Status(resp.Status).JSON(
-		resp,
+	jwtToken := c.Get("authToken")
+
+	if jwtToken == "" {
+		return ErrUnAuthorized()
+	}
+
+	res, err := ParseJWT(jwtToken)
+	if err != nil {
+		return NewBlogError(fiber.StatusBadRequest, err.Error())
+	}
+
+	expiredAt, ok := res["ExpiredAt"]
+	if !ok {
+		log.Fatal("error in getting expiredat field from mapclaims")
+		return ErrUnAuthorized()
+	}
+
+	expiredAtTest := int64(expiredAt.(float64))
+	if time.Now().Unix() > expiredAtTest {
+		return ErrUnAuthorized()
+	}
+
+	return c.Status(fiber.StatusAccepted).JSON(
+		types.Response{
+			Status:  fiber.StatusAccepted,
+			Message: "signIn successfully 🤘✅",
+		},
+	)
+}
+
+func (a *Api) HandleSignUpUser(c *fiber.Ctx) error {
+	var user types.User
+	if err := c.BodyParser(&user); err != nil {
+		return ErrPostBadRequest()
+	}
+
+	user.Password = user.HashUserPassword()
+
+	err := a.mysqlDB.InsertUser(&user)
+	if err != nil {
+		return ErrPostBadRequest()
+	}
+
+	jwtToken, err := GenerateJWT(user.ID, false, time.Now().Add(3*time.Minute))
+	if err != nil {
+		return NewBlogError(fiber.StatusBadRequest, err.Error())
+	}
+
+	return c.Status(fiber.StatusAccepted).JSON(
+		types.Response{
+			Status:  fiber.StatusAccepted,
+			Message: jwtToken,
+		},
 	)
 }

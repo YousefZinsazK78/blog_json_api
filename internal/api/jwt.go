@@ -2,7 +2,6 @@ package api
 
 import (
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -10,12 +9,12 @@ import (
 
 const SimpleSecretKey = "simplesecretkeyblog"
 
-func GenerateJWT(userid int, isAdmin bool, expireDuration time.Duration) (string, error) {
-	log.Println(userid, isAdmin)
+func GenerateJWT(userid int, isAdmin bool, expireDuration time.Time) (string, error) {
+	// log.Println(userid, isAdmin)
 	dataMap := jwt.MapClaims{
 		"userid":    userid,
 		"isAdmin":   isAdmin,
-		"ExpiredAt": time.Now().Add(expireDuration),
+		"ExpiredAt": jwt.NewNumericDate(expireDuration),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, dataMap)
 	tokenString, err := token.SignedString([]byte(SimpleSecretKey))
