@@ -59,3 +59,10 @@ func ErrUnAuthorized() BlogError {
 		Message: "unauthorized!",
 	}
 }
+
+func ErrInternalServer() BlogError {
+	return BlogError{
+		Code:    fiber.StatusInternalServerError,
+		Message: "internal server error!",
+	}
+}

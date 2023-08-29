@@ -38,8 +38,12 @@ func main() {
 	v1.Get("/posts/title/:title", apiHandler.HandleGetPostByTitle)
 	v1.Delete("/posts/:id", apiHandler.HandleDeletePost)
 	v1.Put("/posts/:id", apiHandler.HandleUpdatePost)
+	v1.Post("/posts/category", apiHandler.HandleInsertCategory)
+	v1.Put("/posts/category/:id", apiHandler.HandleUpdateCategory)
+	v1.Delete("/posts/category/:id", apiHandler.HandleDeleteCategory)
+	v1.Get("/posts/category", apiHandler.HandleGetCategory)
 
-	//user router : user blog handler
+	//admin router : user blog handler
 	app.Get("/users", apiHandler.HandleGetUsers)
 	app.Post("/users", apiHandler.HandleInsertUser)
 	app.Delete("/users/:id", apiHandler.HandleDeleteUser)
