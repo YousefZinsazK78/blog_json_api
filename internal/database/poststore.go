@@ -44,7 +44,7 @@ func (m *MysqlDatabase) GetPosts(page, limit int) ([]*types.Post, error) {
 	var posts []*types.Post
 	for rows.Next() {
 		var post types.Post
-		if err := rows.Scan(&post.ID, &post.Title, &post.Body, &post.CreatedAt, &post.UpdatedAt); err != nil {
+		if err := rows.Scan(&post.ID, &post.Title, &post.Body, &post.CreatedAt, &post.UpdatedAt, &post.AuthorID); err != nil {
 			return nil, err
 		}
 		posts = append(posts, &post)

@@ -32,10 +32,10 @@ type UpdateParams struct {
 }
 
 type Post struct {
-	ID     int    `json:"id"`
-	Title  string `json:"title"`
-	Body   string `json:"body"`
-	Author User   `json:"author"`
+	ID       int    `json:"id"`
+	Title    string `json:"title"`
+	Body     string `json:"body"`
+	AuthorID int    `json:"author"`
 	// Likes       []int  `json:"likes"`
 	// Comments    []string  `json:"comments"`
 	// Category  []string  `json:"category"`
@@ -49,7 +49,7 @@ type User struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 	Email    string `json:"email"`
-	IsAdmin  *bool  `json:"-"`
+	IsAdmin  bool   `json:"-"`
 }
 
 func (u User) HashUserPassword() string {

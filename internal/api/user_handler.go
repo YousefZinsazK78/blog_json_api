@@ -104,35 +104,18 @@ func (a *Api) HandleSignInUser(c *fiber.Ctx) error {
 
 	var checkPassword = user.CheckHashPassword(SignUserParams.Password)
 	if !checkPassword {
-		return NewBlogError(fiber.StatusBadRequest, "password not equal !")
+		return NewBlogError(fiber.StatusBadRequest, "invalid credentials: password")
 	}
+	log.Println(user.IsAdmin)
 
-	jwtToken := c.Get("authToken")
-
-	if jwtToken == "" {
-		return ErrUnAuthorized()
-	}
-
-	res, err := ParseJWT(jwtToken)
+	jwtToken, err := GenerateJWT(user.ID, user.IsAdmin, time.Now().Add(1*time.Hour))
 	if err != nil {
 		return NewBlogError(fiber.StatusBadRequest, err.Error())
 	}
-
-	expiredAt, ok := res["ExpiredAt"]
-	if !ok {
-		log.Fatal("error in getting expiredat field from mapclaims")
-		return ErrUnAuthorized()
-	}
-
-	expiredAtTest := int64(expiredAt.(float64))
-	if time.Now().Unix() > expiredAtTest {
-		return ErrUnAuthorized()
-	}
-
 	return c.Status(fiber.StatusAccepted).JSON(
 		types.Response{
 			Status:  fiber.StatusAccepted,
-			Message: "signIn successfully 🤘✅",
+			Message: jwtToken,
 		},
 	)
 }
@@ -144,21 +127,17 @@ func (a *Api) HandleSignUpUser(c *fiber.Ctx) error {
 	}
 
 	user.Password = user.HashUserPassword()
+	user.IsAdmin = false
 
 	err := a.mysqlDB.InsertUser(&user)
 	if err != nil {
 		return ErrPostBadRequest()
 	}
 
-	jwtToken, err := GenerateJWT(user.ID, false, time.Now().Add(3*time.Minute))
-	if err != nil {
-		return NewBlogError(fiber.StatusBadRequest, err.Error())
-	}
-
 	return c.Status(fiber.StatusAccepted).JSON(
 		types.Response{
 			Status:  fiber.StatusAccepted,
-			Message: jwtToken,
+			Message: "user signup successfully",
 		},
 	)
 }

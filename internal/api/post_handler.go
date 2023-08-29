@@ -21,7 +21,8 @@ func (a *Api) HandleGetPost(c *fiber.Ctx) error {
 
 	posts, err := a.mysqlDB.GetPosts(queryParams.Pages, queryParams.Limits)
 	if err != nil {
-		return ErrPostBadRequest()
+		return NewBlogError(fiber.StatusBadRequest, err.Error())
+		// return ErrPostBadRequest()
 	}
 	return c.Status(fiber.StatusOK).JSON(map[string]any{
 		"length":  len(posts),
