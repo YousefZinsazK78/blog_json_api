@@ -20,13 +20,13 @@ type PostStorer interface {
 }
 
 func (m *MysqlDatabase) InsertPost(postModel *types.Post) error {
-	query := `INSERT INTO post_tbl(Title,Body, CreatedAt, UpdatedAt) VALUES (? ,? ,? ,?)`
+	query := `INSERT INTO post_tbl(Title,Body, CreatedAt, UpdatedAt,user_id, category_id) VALUES (? ,? ,? ,?, ? ,?)`
 	stmt, err := m.DB.Prepare(query)
 	if err != nil {
 		return err
 	}
 	postModel.CreatedAt = time.Now().UTC()
-	_, err = stmt.Exec(postModel.Title, postModel.Body, postModel.CreatedAt, postModel.UpdatedAt)
+	_, err = stmt.Exec(postModel.Title, postModel.Body, postModel.CreatedAt, postModel.UpdatedAt, postModel.AuthorID, postModel.CategoryID)
 	if err != nil {
 		return err
 	}
@@ -44,7 +44,7 @@ func (m *MysqlDatabase) GetPosts(page, limit int) ([]*types.Post, error) {
 	var posts []*types.Post
 	for rows.Next() {
 		var post types.Post
-		if err := rows.Scan(&post.ID, &post.Title, &post.Body, &post.CreatedAt, &post.UpdatedAt, &post.AuthorID); err != nil {
+		if err := rows.Scan(&post.ID, &post.Title, &post.Body, &post.CreatedAt, &post.UpdatedAt, &post.AuthorID, &post.CategoryID); err != nil {
 			return nil, err
 		}
 		posts = append(posts, &post)
@@ -62,7 +62,7 @@ func (m *MysqlDatabase) GetPostById(id int) (*types.Post, error) {
 
 	var post types.Post
 	for res.Next() {
-		err := res.Scan(&post.ID, &post.Title, &post.Body, &post.CreatedAt, &post.UpdatedAt)
+		err := res.Scan(&post.ID, &post.Title, &post.Body, &post.CreatedAt, &post.UpdatedAt, &post.AuthorID, &post.CategoryID)
 		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
 				return nil, fmt.Errorf("%d : post not found!", id)
@@ -85,7 +85,7 @@ func (m *MysqlDatabase) GetPostByTitle(title string) ([]*types.Post, error) {
 	var posts []*types.Post
 	for rows.Next() {
 		var post types.Post
-		if err := rows.Scan(&post.ID, &post.Title, &post.Body, &post.CreatedAt, &post.UpdatedAt); err != nil {
+		if err := rows.Scan(&post.ID, &post.Title, &post.Body, &post.CreatedAt, &post.UpdatedAt, &post.AuthorID, &post.CategoryID); err != nil {
 			return nil, err
 		}
 		posts = append(posts, &post)

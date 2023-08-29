@@ -40,12 +40,12 @@ type Post struct {
 	ID       int    `json:"id"`
 	Title    string `json:"title"`
 	Body     string `json:"body"`
-	AuthorID int    `json:"author"`
+	AuthorID int    `json:"authorid"`
 	// Likes       []int  `json:"likes"`
 	// Comments    []string  `json:"comments"`
-	// Category  []string  `json:"category"`
-	CreatedAt time.Time  `json:"createdat"`
-	UpdatedAt *time.Time `json:"updatedat"`
+	CategoryID int        `json:"categoryid"`
+	CreatedAt  time.Time  `json:"createdat"`
+	UpdatedAt  *time.Time `json:"updatedat"`
 }
 
 type User struct {

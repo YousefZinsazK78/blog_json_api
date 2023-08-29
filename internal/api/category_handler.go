@@ -11,12 +11,12 @@ import (
 func (a *Api) HandleInsertCategory(c *fiber.Ctx) error {
 	var category types.Category
 	if err := c.BodyParser(&category); err != nil {
-		return ErrPostBadRequest()
+		return NewBlogError(fiber.StatusBadRequest, err.Error())
 	}
 
 	err := a.mysqlDB.InsertCategory(&category)
 	if err != nil {
-		return ErrPostBadRequest()
+		return NewBlogError(fiber.StatusBadRequest, err.Error())
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(types.Response{
@@ -33,7 +33,8 @@ func (a *Api) HandleUpdateCategory(c *fiber.Ctx) error {
 	}
 	var category types.Category
 	if err := c.BodyParser(&category); err != nil {
-		return ErrPostBadRequest()
+		return NewBlogError(fiber.StatusBadRequest, err.Error())
+		// return ErrPostBadRequest()
 	}
 
 	err = a.mysqlDB.UpdateCategory(intID, &category)
