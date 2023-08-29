@@ -1,6 +1,8 @@
 package api
 
 import (
+	"log"
+
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -13,6 +15,7 @@ func ErrorHandler(c *fiber.Ctx, err error) error {
 	if error, ok := err.(BlogError); ok {
 		return c.Status(error.Code).JSON(ErrResp{Code: error.Code, Msg: error.Message})
 	}
+	log.Println(err)
 	return c.Status(fiber.StatusBadRequest).JSON(ErrResp{Code: fiber.StatusBadRequest, Msg: "Bad Request"})
 }
 

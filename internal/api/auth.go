@@ -1,7 +1,6 @@
 package api
 
 import (
-	"log"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -31,13 +30,11 @@ func JWTAuthmiddleware(db database.UserStorer) fiber.Handler {
 		if !ok {
 			return NewBlogError(fiber.StatusBadRequest, "is not ok to find userid ")
 		}
-		log.Println(userID)
 		intUserID := int(userID)
 		user, err := db.GetUserByID(intUserID)
 		if err != nil {
 			return ErrUnAuthorized()
 		}
-		log.Println(user)
 		c.Context().SetUserValue("user", user)
 		return c.Next()
 	}

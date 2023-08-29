@@ -31,17 +31,18 @@ func main() {
 	//close db connection
 	defer mysqlConn.Close()
 
-	//v1 : post blog handler
+	//v1 : post blog handlers
 	v1.Get("/posts", apiHandler.HandleGetPost)
 	v1.Post("/posts", apiHandler.HandleInsertPost)
 	v1.Get("/posts/:id", apiHandler.HandleGetPostById)
 	v1.Get("/posts/title/:title", apiHandler.HandleGetPostByTitle)
 	v1.Delete("/posts/:id", apiHandler.HandleDeletePost)
 	v1.Put("/posts/:id", apiHandler.HandleUpdatePost)
+	//category handlers
+	v1.Get("/posts/all/category", apiHandler.HandleGetCategory)
 	v1.Post("/posts/category", apiHandler.HandleInsertCategory)
 	v1.Put("/posts/category/:id", apiHandler.HandleUpdateCategory)
 	v1.Delete("/posts/category/:id", apiHandler.HandleDeleteCategory)
-	v1.Get("/posts/category", apiHandler.HandleGetCategory)
 
 	//admin router : user blog handler
 	app.Get("/users", apiHandler.HandleGetUsers)

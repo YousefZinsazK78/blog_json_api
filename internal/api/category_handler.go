@@ -61,21 +61,20 @@ func (a *Api) HandleDeleteCategory(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(types.Response{
 		Status:  fiber.StatusOK,
-		Message: "successfully updated...",
+		Message: "successfully deleted...",
 	})
 }
 
 func (a *Api) HandleGetCategory(c *fiber.Ctx) error {
 	var queryParams types.QueryParams
 	if err := c.QueryParser(&queryParams); err != nil {
-		log.Println(err)
-		return ErrInternalServer()
+		return NewBlogError(fiber.StatusBadRequest, err.Error())
 	}
 	log.Println(queryParams)
-	categories, err := a.mysqlDB.GetCategory(&queryParams)
+	categories, err := a.mysqlDB.GetCategory(queryParams.Pages, queryParams.Limits)
 	if err != nil {
 		log.Println(err)
-		return ErrInternalServer()
+		return NewBlogError(fiber.StatusBadRequest, err.Error())
 	}
 
 	return c.Status(fiber.StatusOK).JSON(types.Response{

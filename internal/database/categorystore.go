@@ -6,7 +6,7 @@ type CategoryStorer interface {
 	InsertCategory(*types.Category) error
 	UpdateCategory(int, *types.Category) error
 	DeleteCategory(int) error
-	GetCategory(*types.QueryParams) ([]*types.Category, error)
+	GetCategory(int, int) ([]*types.Category, error)
 }
 
 func (m *MysqlDatabase) InsertCategory(category *types.Category) error {
@@ -51,9 +51,9 @@ func (m *MysqlDatabase) DeleteCategory(id int) error {
 	return nil
 }
 
-func (m *MysqlDatabase) GetCategory(queryP *types.QueryParams) ([]*types.Category, error) {
+func (m *MysqlDatabase) GetCategory(pages, limits int) ([]*types.Category, error) {
 	query := `SELECT * FROM CATEGORY_TBL LIMIT ?,?;`
-	rows, err := m.DB.Query(query, (queryP.Pages-1)*queryP.Limits, queryP.Limits)
+	rows, err := m.DB.Query(query, (pages-1)*limits, limits)
 	if err != nil {
 		return nil, err
 	}
