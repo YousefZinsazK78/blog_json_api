@@ -38,11 +38,6 @@ func main() {
 	v1.Get("/posts/title/:title", apiHandler.HandleGetPostByTitle)
 	v1.Delete("/posts/:id", apiHandler.HandleDeletePost)
 	v1.Put("/posts/:id", apiHandler.HandleUpdatePost)
-	//category handlers
-	v1.Get("/posts/show/category", apiHandler.HandleGetCategory)
-	v1.Post("/posts/category", apiHandler.HandleInsertCategory)
-	v1.Put("/posts/category/:id", apiHandler.HandleUpdateCategory)
-	v1.Delete("/posts/category/:id", apiHandler.HandleDeleteCategory)
 
 	//admin router : user blog handler
 	app.Get("/users", apiHandler.HandleGetUsers)

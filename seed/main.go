@@ -3,14 +3,38 @@ package main
 import (
 	"database/sql"
 	"log"
-	"os"
-	"sync"
 	"time"
 
 	"github.com/joho/godotenv"
-	"github.com/yousefzinsazk78/blog_json_api/internal/database"
 	"github.com/yousefzinsazk78/blog_json_api/internal/types"
 )
+
+func seedCategoryTable(db *sql.DB, categoryname string, postid int) {
+	query := `INSERT INTO category_tbl(NAME, postid) VALUES (? ,?)`
+	stmt, err := db.Prepare(query)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer stmt.Close()
+	_, err = stmt.Exec(categoryname, postid)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func seedCategoryPostTable(db *sql.DB, categoryid, postid int) {
+	query := `INSERT INTO categorypost_tbl(categoryid, postid) VALUES (? ,?)`
+	stmt, err := db.Prepare(query)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(categoryid, postid)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
 
 func seedPostTable(db *sql.DB, title, body string, userid int) {
 	query := `INSERT INTO post_tbl(Title,Body, CreatedAt,user_id) VALUES (? ,? ,?, ?)`
@@ -18,7 +42,7 @@ func seedPostTable(db *sql.DB, title, body string, userid int) {
 	if err != nil {
 		log.Fatal(err)
 	}
-
+	defer stmt.Close()
 	_, err = stmt.Exec(title, body, time.Now().UTC(), userid)
 	if err != nil {
 		log.Fatal(err)
@@ -47,33 +71,40 @@ func main() {
 		log.Fatal("Error: unable to load .env file")
 	}
 
-	mysqlConn := database.NewMysqlConn(os.Getenv("Username"), os.Getenv("Password"), os.Getenv("Net"), os.Getenv("Addr"), os.Getenv("DBName"))
-	var wg sync.WaitGroup
+	// mysqlConn := database.NewMysqlConn(os.Getenv("Username"), os.Getenv("Password"), os.Getenv("Net"), os.Getenv("Addr"), os.Getenv("DBName"))
+	// seedCategoryTable(mysqlConn.DB, "science", 2505)
+	// seedCategoryTable(mysqlConn.DB, "science", 2504)
+	// seedCategoryTable(mysqlConn.DB, "sport", 2505)
+	// seedCategoryTable(mysqlConn.DB, "sport", 2504)
+	// var wg sync.WaitGroup
 
-	wg.Add(3)
-	go func() {
-		for i := 0; i < 250; i++ {
-			seedPostTable(mysqlConn.DB, "title test blog post", "body test blog post", 19)
-		}
-		wg.Done()
-	}()
+	// wg.Add(1)
+	// go func() {
+	// 	for i := 0; i < 15; i++ {
 
-	go func() {
-		for i := 0; i < 250; i++ {
-			seedPostTable(mysqlConn.DB, "blog post title", "blog post body", 19)
-		}
-		wg.Done()
-	}()
-	go func() {
-		for i := 0; i < 250; i++ {
-			seedPostTable(mysqlConn.DB, "test test title test test", "test body test", 19)
-		}
-		wg.Done()
-	}()
+	// 		// seedPostTable(mysqlConn.DB, "title test blog post haha", "body test blog post", 20)
+	// 	}
+	// 	wg.Done()
+	// }()
 
-	wg.Wait()
+	// wg.Wait()
 
-	// seedUserTable(mysqlConn.DB, "mina kashani", "mina@email.com", "mina7887", "password123", true)
-	// seedUserTable(mysqlConn.DB, "tina irani", "tina@email.com", "tina7887", "password123", false)
+	// go func() {
+	// 	for i := 0; i < 250; i++ {
+	// 		seedPostTable(mysqlConn.DB, "blog post title", "blog post body", 19)
+	// 	}
+	// 	wg.Done()
+	// }()
+	// go func() {
+	// 	for i := 0; i < 250; i++ {
+	// 		seedPostTable(mysqlConn.DB, "test test title test test", "test body test", 19)
+	// 	}
+	// 	wg.Done()
+	// }()
+
+	// wg.Wait()
+
+	// seedUserTable(mysqlConn.DB, "yousef kashani", "mina@email.com", "yousefusername", "password123", true)
+	// seedUserTable(mysqlConn.DB, "mina irani", "mina@email.com", "minausername", "password123", false)
 
 }
