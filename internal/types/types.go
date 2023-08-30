@@ -43,7 +43,7 @@ type Post struct {
 	AuthorID int    `json:"authorid"`
 	// Likes       []int  `json:"likes"`
 	// Comments    []string  `json:"comments"`
-	CategoryID int        `json:"categoryid"`
+	CategoryID []int      `json:"categoryid"`
 	CreatedAt  time.Time  `json:"createdat"`
 	UpdatedAt  *time.Time `json:"updatedat"`
 }

@@ -33,12 +33,12 @@ func (a *Api) HandleGetPost(c *fiber.Ctx) error {
 func (a *Api) HandleInsertPost(c *fiber.Ctx) error {
 	var post types.Post
 	if err := c.BodyParser(&post); err != nil {
-		return ErrPostBadRequest()
+		return NewBlogError(fiber.StatusBadRequest, err.Error())
 	}
 
 	err := a.mysqlDB.InsertPost(&post)
 	if err != nil {
-		return ErrPostBadRequest()
+		return NewBlogError(fiber.StatusBadRequest, err.Error())
 	}
 
 	return c.Status(fiber.StatusOK).JSON(map[string]string{

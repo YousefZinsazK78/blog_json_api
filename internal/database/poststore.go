@@ -20,13 +20,22 @@ type PostStorer interface {
 }
 
 func (m *MysqlDatabase) InsertPost(postModel *types.Post) error {
-	query := `INSERT INTO post_tbl(Title,Body, CreatedAt, UpdatedAt,user_id, category_id) VALUES (? ,? ,? ,?, ? ,?)`
+	query := `INSERT INTO post_tbl(Title,Body, CreatedAt, UpdatedAt,user_id) VALUES (? ,? ,? ,?, ?)`
 	stmt, err := m.DB.Prepare(query)
 	if err != nil {
 		return err
 	}
 	postModel.CreatedAt = time.Now().UTC()
-	_, err = stmt.Exec(postModel.Title, postModel.Body, postModel.CreatedAt, postModel.UpdatedAt, postModel.AuthorID, postModel.CategoryID)
+	res, err := stmt.Exec(postModel.Title, postModel.Body, postModel.CreatedAt, postModel.UpdatedAt, postModel.AuthorID)
+	if err != nil {
+		return err
+	}
+	insertedID, err := res.LastInsertId()
+	if err != nil {
+		return err
+	}
+
+	err = m.InsertCategoryPost(postModel.CategoryID, int(insertedID))
 	if err != nil {
 		return err
 	}
