@@ -28,7 +28,8 @@ type QueryParams struct {
 }
 
 type UpdateParams struct {
-	Title string `json:"title"`
+	Title      string `json:"title"`
+	CategoryID []int  `json:"categoryid"`
 }
 
 type Category struct {

@@ -35,10 +35,13 @@ func (m *MysqlDatabase) InsertPost(postModel *types.Post) error {
 		return err
 	}
 
-	err = m.InsertCategoryPost(postModel.CategoryID, int(insertedID))
-	if err != nil {
-		return err
+	if postModel.CategoryID != nil || len(postModel.CategoryID) != 0 {
+		err = m.InsertCategory(postModel.CategoryID, int(insertedID))
+		if err != nil {
+			return err
+		}
 	}
+
 	return nil
 }
 
@@ -53,12 +56,44 @@ func (m *MysqlDatabase) GetPosts(page, limit int) ([]*types.Post, error) {
 	var posts []*types.Post
 	for rows.Next() {
 		var post types.Post
-		if err := rows.Scan(&post.ID, &post.Title, &post.Body, &post.CreatedAt, &post.UpdatedAt, &post.AuthorID, &post.CategoryID); err != nil {
+		if err := rows.Scan(&post.ID, &post.Title, &post.Body, &post.CreatedAt, &post.UpdatedAt, &post.AuthorID); err != nil {
 			return nil, err
 		}
+		//todo: get category from categorypost_tbl
+		categoryModel, err := m.getCategory(post.ID)
+		if err != nil {
+			return nil, err
+		}
+		var cateID = []int{}
+		for _, v := range categoryModel {
+			cateID = append(cateID, v.ID)
+		}
+		post.CategoryID = cateID
 		posts = append(posts, &post)
 	}
 	return posts, nil
+}
+
+func (m *MysqlDatabase) getCategory(postid int) ([]*types.Category, error) {
+	query := `SELECT c.ID,c.NAME
+	FROM CATEGORYPOST_TBL E LEFT JOIN CATEGORY_TBL c
+	ON E.CATEGORYID= c.ID
+	WHERE E.POSTID = ?;`
+	rows, err := m.DB.Query(query, postid)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var category []*types.Category
+	for rows.Next() {
+		var cat types.Category
+		if err := rows.Scan(&cat.ID, &cat.CategoryName); err != nil {
+			return nil, err
+		}
+		category = append(category, &cat)
+	}
+	return category, nil
 }
 
 func (m *MysqlDatabase) GetPostById(id int) (*types.Post, error) {
@@ -126,6 +161,28 @@ func (m *MysqlDatabase) UpdatePost(id int, postParam *types.UpdateParams) error 
 	_, err = stmt.Exec(postParam.Title, time.Now().UTC(), id)
 	if err != nil {
 		return err
+	}
+	/// check there is category or not ....
+	count, err := m.GetCountCategory(id)
+	if err != nil {
+		return err
+	}
+
+	if count > 0 {
+		err := m.DeleteCategory(id)
+		if err != nil {
+			return err
+		}
+		err = m.InsertCategory(postParam.CategoryID, id)
+		if err != nil {
+			return err
+		}
+	} else {
+		///insert category to categorypost_tbl
+		err = m.InsertCategory(postParam.CategoryID, id)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
