@@ -123,9 +123,11 @@ func (a *Api) HandleLikesPost(c *fiber.Ctx) error {
 		return NewBlogError(fiber.StatusBadRequest, err.Error())
 	}
 
-	err := a.mysqlDB.InsertLike(likePost.UserID, likePost.PostID)
+	user := c.Context().UserValue("user").(*types.User)
+	log.Println(user.ID)
+	err := a.mysqlDB.InsertLike(user.ID, likePost.PostID)
 	if err != nil {
-		return ErrNotFound()
+		return ErrInternalServer()
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(map[string]any{
@@ -139,10 +141,10 @@ func (a *Api) HandleDisLikesPost(c *fiber.Ctx) error {
 	if err := c.BodyParser(&likePost); err != nil {
 		return NewBlogError(fiber.StatusBadRequest, err.Error())
 	}
-
-	err := a.mysqlDB.DeleteLike(likePost.UserID, likePost.PostID)
+	user := c.Context().UserValue("user").(*types.User)
+	err := a.mysqlDB.DeleteLike(user.ID, likePost.PostID)
 	if err != nil {
-		return ErrNotFound()
+		return ErrInternalServer()
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(map[string]any{

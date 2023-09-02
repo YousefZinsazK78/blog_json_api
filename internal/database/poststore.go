@@ -59,7 +59,6 @@ func (m *MysqlDatabase) GetPosts(page, limit int) ([]*types.Post, error) {
 		if err := rows.Scan(&post.ID, &post.Title, &post.Body, &post.CreatedAt, &post.UpdatedAt, &post.AuthorID); err != nil {
 			return nil, err
 		}
-		//todo: get category from categorypost_tbl
 		categoryModel, err := m.getCategory(post.ID)
 		if err != nil {
 			return nil, err
@@ -69,6 +68,10 @@ func (m *MysqlDatabase) GetPosts(page, limit int) ([]*types.Post, error) {
 			cateID = append(cateID, v.ID)
 		}
 		post.CategoryID = cateID
+		post.Likes, err = m.GetLikesCount(post.ID)
+		if err != nil {
+			return nil, err
+		}
 		posts = append(posts, &post)
 	}
 	return posts, nil
@@ -106,13 +109,28 @@ func (m *MysqlDatabase) GetPostById(id int) (*types.Post, error) {
 
 	var post types.Post
 	for res.Next() {
-		err := res.Scan(&post.ID, &post.Title, &post.Body, &post.CreatedAt, &post.UpdatedAt, &post.AuthorID, &post.CategoryID)
+		err := res.Scan(&post.ID, &post.Title, &post.Body, &post.CreatedAt, &post.UpdatedAt, &post.AuthorID)
 		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
 				return nil, fmt.Errorf("%d : post not found!", id)
 			}
 			return nil, err
 		}
+	}
+
+	categoryModel, err := m.getCategory(post.ID)
+	if err != nil {
+		return nil, err
+	}
+	var cateID = []int{}
+	for _, v := range categoryModel {
+		cateID = append(cateID, v.ID)
+	}
+	post.CategoryID = cateID
+
+	post.Likes, err = m.GetLikesCount(post.ID)
+	if err != nil {
+		return nil, err
 	}
 	return &post, nil
 }
@@ -132,8 +150,23 @@ func (m *MysqlDatabase) GetPostByTitle(title string) ([]*types.Post, error) {
 		if err := rows.Scan(&post.ID, &post.Title, &post.Body, &post.CreatedAt, &post.UpdatedAt, &post.AuthorID, &post.CategoryID); err != nil {
 			return nil, err
 		}
+		categoryModel, err := m.getCategory(post.ID)
+		if err != nil {
+			return nil, err
+		}
+		var cateID = []int{}
+		for _, v := range categoryModel {
+			cateID = append(cateID, v.ID)
+		}
+		post.CategoryID = cateID
+
+		post.Likes, err = m.GetLikesCount(post.ID)
+		if err != nil {
+			return nil, err
+		}
 		posts = append(posts, &post)
 	}
+
 	return posts, nil
 }
 

@@ -9,7 +9,7 @@ import (
 
 type LikesParams struct {
 	PostID int `json:"postid"`
-	UserID int `json:"userid"`
+	UserID int `json:"-"`
 }
 
 type UserSignInParams struct {
@@ -47,7 +47,7 @@ type Post struct {
 	Title    string `json:"title"`
 	Body     string `json:"body"`
 	AuthorID int    `json:"authorid"`
-	// Likes       []int  `json:"likes"`
+	Likes    int    `json:"likes"`
 	// Comments    []string  `json:"comments"`
 	CategoryID []int      `json:"categoryid"`
 	CreatedAt  time.Time  `json:"createdat"`
