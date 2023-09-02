@@ -84,7 +84,8 @@ func (a *Api) HandleDeletePost(c *fiber.Ctx) error {
 
 	err = a.mysqlDB.DeletePost(intId)
 	if err != nil {
-		return ErrNotFound()
+		log.Println(err.Error())
+		return ErrInternalServer()
 	}
 
 	return c.Status(fiber.StatusOK).JSON(map[string]any{
