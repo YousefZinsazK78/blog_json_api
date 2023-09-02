@@ -3,9 +3,11 @@ package main
 import (
 	"database/sql"
 	"log"
+	"os"
 	"time"
 
 	"github.com/joho/godotenv"
+	"github.com/yousefzinsazk78/blog_json_api/internal/database"
 	"github.com/yousefzinsazk78/blog_json_api/internal/types"
 )
 
@@ -71,7 +73,7 @@ func main() {
 		log.Fatal("Error: unable to load .env file")
 	}
 
-	// mysqlConn := database.NewMysqlConn(os.Getenv("Username"), os.Getenv("Password"), os.Getenv("Net"), os.Getenv("Addr"), os.Getenv("DBName"))
+	mysqlConn := database.NewMysqlConn(os.Getenv("Username"), os.Getenv("Password"), os.Getenv("Net"), os.Getenv("Addr"), os.Getenv("DBName"))
 	// seedCategoryTable(mysqlConn.DB, "science", 2505)
 	// seedCategoryTable(mysqlConn.DB, "science", 2504)
 	// seedCategoryTable(mysqlConn.DB, "sport", 2505)
@@ -104,7 +106,7 @@ func main() {
 
 	// wg.Wait()
 
-	// seedUserTable(mysqlConn.DB, "yousef kashani", "mina@email.com", "yousefusername", "password123", true)
+	seedUserTable(mysqlConn.DB, "yousef zinsaz", "adminyousef@email.com", "yousefzz", "password", true)
 	// seedUserTable(mysqlConn.DB, "mina irani", "mina@email.com", "minausername", "password123", false)
 
 }

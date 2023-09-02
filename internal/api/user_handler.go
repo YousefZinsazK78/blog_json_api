@@ -73,6 +73,7 @@ func (a *Api) HandleUpdateUser(c *fiber.Ctx) error {
 }
 
 func (a *Api) HandleGetUsers(c *fiber.Ctx) error {
+	log.Println("handle get users")
 	var queryParams types.QueryParams
 	if err := c.QueryParser(&queryParams); err != nil {
 		return ErrPostBadRequest()

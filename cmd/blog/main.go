@@ -25,7 +25,8 @@ func main() {
 				ErrorHandler: api.ErrorHandler,
 			},
 		)
-		v1 = app.Group("/api/v1", api.JWTAuthmiddleware(mysqlConn))
+		v1    = app.Group("/api/v1", api.JWTAuthmiddleware(mysqlConn))
+		admin = app.Group("/admin", api.JWTAuthmiddleware(mysqlConn), api.Admin)
 	)
 
 	//close db connection
@@ -40,10 +41,10 @@ func main() {
 	v1.Put("/posts/:id", apiHandler.HandleUpdatePost)
 
 	//admin router : user blog handler
-	app.Get("/users", apiHandler.HandleGetUsers)
-	app.Post("/users", apiHandler.HandleInsertUser)
-	app.Delete("/users/:id", apiHandler.HandleDeleteUser)
-	app.Put("/users/:id", apiHandler.HandleUpdateUser)
+	admin.Get("/users", apiHandler.HandleGetUsers)
+	admin.Post("/users", apiHandler.HandleInsertUser)
+	admin.Delete("/users/:id", apiHandler.HandleDeleteUser)
+	admin.Put("/users/:id", apiHandler.HandleUpdateUser)
 
 	app.Post("/users/signin", apiHandler.HandleSignInUser)
 	app.Post("/users/signup", apiHandler.HandleSignUpUser)
