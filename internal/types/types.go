@@ -7,6 +7,11 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+type LikesParams struct {
+	PostID int `json:"postid"`
+	UserID int `json:"userid"`
+}
+
 type UserSignInParams struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`

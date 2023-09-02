@@ -39,6 +39,8 @@ func main() {
 	v1.Get("/posts/title/:title", apiHandler.HandleGetPostByTitle)
 	v1.Delete("/posts/:id", apiHandler.HandleDeletePost)
 	v1.Put("/posts/:id", apiHandler.HandleUpdatePost)
+	v1.Post("/posts/likes", apiHandler.HandleLikesPost)
+	v1.Post("/posts/dislikes", apiHandler.HandleDisLikesPost)
 
 	//admin router : user blog handler
 	admin.Get("/users", apiHandler.HandleGetUsers)

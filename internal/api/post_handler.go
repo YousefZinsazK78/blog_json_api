@@ -116,3 +116,37 @@ func (a *Api) HandleUpdatePost(c *fiber.Ctx) error {
 		"result": "post updated successfully ✅",
 	})
 }
+
+func (a *Api) HandleLikesPost(c *fiber.Ctx) error {
+	var likePost types.LikesParams
+	if err := c.BodyParser(&likePost); err != nil {
+		return NewBlogError(fiber.StatusBadRequest, err.Error())
+	}
+
+	err := a.mysqlDB.InsertLike(likePost.UserID, likePost.PostID)
+	if err != nil {
+		return ErrNotFound()
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(map[string]any{
+		"status": fiber.StatusCreated,
+		"result": "post liked 👍",
+	})
+}
+
+func (a *Api) HandleDisLikesPost(c *fiber.Ctx) error {
+	var likePost types.LikesParams
+	if err := c.BodyParser(&likePost); err != nil {
+		return NewBlogError(fiber.StatusBadRequest, err.Error())
+	}
+
+	err := a.mysqlDB.DeleteLike(likePost.UserID, likePost.PostID)
+	if err != nil {
+		return ErrNotFound()
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(map[string]any{
+		"status": fiber.StatusCreated,
+		"result": "post disliked 👎",
+	})
+}
