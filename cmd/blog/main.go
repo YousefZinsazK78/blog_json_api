@@ -10,8 +10,6 @@ import (
 	"github.com/yousefzinsazk78/blog_json_api/internal/database"
 )
 
-//todo : add comment to insert post...
-
 func main() {
 	err := godotenv.Load("./internal/configs/.env")
 	if err != nil {

@@ -72,6 +72,10 @@ func (m *MysqlDatabase) GetPosts(page, limit int) ([]*types.Post, error) {
 		if err != nil {
 			return nil, err
 		}
+		post.Comments, err = m.GetCommentByPostID(post.ID)
+		if err != nil {
+			return nil, err
+		}
 		posts = append(posts, &post)
 	}
 	return posts, nil

@@ -23,11 +23,12 @@ func (m *MysqlDatabase) GetCommentByPostID(postID int) ([]*types.Comment, error)
 	defer rows.Close()
 	var comments []*types.Comment
 	for rows.Next() {
-		var comment *types.Comment
-		if err := rows.Scan(comment.ID, comment.Content, comment.UserID, comment.PostID, comment.CreatedAt, comment.UpdatedAt); err != nil {
+
+		var comment types.Comment
+		if err := rows.Scan(&comment.ID, &comment.Content, &comment.UserID, &comment.PostID, &comment.CreatedAt, &comment.UpdatedAt); err != nil {
 			return nil, err
 		}
-		comments = append(comments, comment)
+		comments = append(comments, &comment)
 	}
 	return comments, nil
 }

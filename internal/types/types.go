@@ -48,24 +48,24 @@ type Category struct {
 }
 
 type Post struct {
-	ID       int    `json:"id"`
-	Title    string `json:"title"`
-	Body     string `json:"body"`
-	AuthorID int    `json:"authorid"`
-	Likes    int    `json:"likes"`
-	// Comments    []string  `json:"comments"`
+	ID         int        `json:"id"`
+	Title      string     `json:"title"`
+	Body       string     `json:"body"`
+	AuthorID   int        `json:"authorid"`
+	Likes      int        `json:"likes"`
+	Comments   []*Comment `json:"comments"`
 	CategoryID []int      `json:"categoryid"`
 	CreatedAt  time.Time  `json:"createdat"`
 	UpdatedAt  *time.Time `json:"updatedat"`
 }
 
 type Comment struct {
-	ID        int       `json:"id"`
-	Content   string    `json:"content"`
-	UserID    int       `json:"userid"`
-	PostID    int       `json:"postid"`
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt"`
+	ID        int        `json:"id"`
+	Content   string     `json:"content"`
+	UserID    int        `json:"userid"`
+	PostID    int        `json:"postid"`
+	CreatedAt time.Time  `json:"createdAt"`
+	UpdatedAt *time.Time `json:"updatedAt"`
 }
 
 type User struct {
