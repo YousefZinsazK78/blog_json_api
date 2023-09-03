@@ -44,7 +44,7 @@ func main() {
 	v1.Post("/posts/comments", apiHandler.HandleCommentsPost)
 	v1.Delete("/posts/delete/comments", apiHandler.HandleCommentsDelete)
 
-	//admin router : user blog handler
+	//admin router: user blog handler
 	admin.Get("/users", apiHandler.HandleGetUsers)
 	admin.Post("/users", apiHandler.HandleInsertUser)
 	admin.Delete("/users/:id", apiHandler.HandleDeleteUser)
