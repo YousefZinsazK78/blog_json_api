@@ -28,4 +28,20 @@ mysql tables:
       1. rule writer => write , read , update , delete blog
       2. rule admin => write , read , update , delete blog, delete comments, delete users
       3. rule guest => read blog , read comments
-   
+
+features:
+   insert post
+   insert category
+   insert comment
+   insert like (add like/dislike)
+admin features:
+   insert , update , delete , view users
+   insert , update , delete , view posts
+
+tools :
+   Mysql database
+   Fiber/v2 framework
+   godotenv for load .env files
+   middlewares (auth middleware)
+   use queryparser, bodyparser
+   JWT for authentication
