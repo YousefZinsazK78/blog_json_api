@@ -11,6 +11,25 @@ import (
 type CommentsStorer interface {
 	InsertComment(*types.Comment) error
 	DeleteComment(*types.DeleteComments) error
+	GetCommentByPostID(int) ([]*types.Comment, error)
+}
+
+func (m *MysqlDatabase) GetCommentByPostID(postID int) ([]*types.Comment, error) {
+	query := `SELECT * FROM COMMENTS_TBL WHERE POSTID=?;`
+	rows, err := m.DB.Query(query, postID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var comments []*types.Comment
+	for rows.Next() {
+		var comment *types.Comment
+		if err := rows.Scan(comment.ID, comment.Content, comment.UserID, comment.PostID, comment.CreatedAt, comment.UpdatedAt); err != nil {
+			return nil, err
+		}
+		comments = append(comments, comment)
+	}
+	return comments, nil
 }
 
 func (m *MysqlDatabase) InsertComment(comment *types.Comment) error {
