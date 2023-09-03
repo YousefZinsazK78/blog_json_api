@@ -7,6 +7,11 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+type DeleteComments struct {
+	UserID int `json:"userid"`
+	PostID int `json:"postid"`
+}
+
 type LikesParams struct {
 	PostID int `json:"postid"`
 	UserID int `json:"-"`
@@ -52,6 +57,15 @@ type Post struct {
 	CategoryID []int      `json:"categoryid"`
 	CreatedAt  time.Time  `json:"createdat"`
 	UpdatedAt  *time.Time `json:"updatedat"`
+}
+
+type Comment struct {
+	ID        int       `json:"id"`
+	Content   string    `json:"content"`
+	UserID    int       `json:"userid"`
+	PostID    int       `json:"postid"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
 }
 
 type User struct {

@@ -10,6 +10,8 @@ import (
 	"github.com/yousefzinsazk78/blog_json_api/internal/database"
 )
 
+//todo : add comment to insert post...
+
 func main() {
 	err := godotenv.Load("./internal/configs/.env")
 	if err != nil {
@@ -41,6 +43,8 @@ func main() {
 	v1.Put("/posts/:id", apiHandler.HandleUpdatePost)
 	v1.Post("/posts/likes", apiHandler.HandleLikesPost)
 	v1.Post("/posts/dislikes", apiHandler.HandleDisLikesPost)
+	v1.Post("/posts/comments", apiHandler.HandleCommentsPost)
+	v1.Delete("/posts/delete/comments", apiHandler.HandleCommentsDelete)
 
 	//admin router : user blog handler
 	admin.Get("/users", apiHandler.HandleGetUsers)
